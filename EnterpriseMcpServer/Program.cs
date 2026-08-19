@@ -16,5 +16,6 @@ builder.Services
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDataverseService, DataverseService>();
 builder.Services.AddScoped<IMonkeyService, MonkeyService>();
+builder.Services.AddScoped<ISitecoreAIService, SitecoreAIService>();
 
 builder.Build().Run();
