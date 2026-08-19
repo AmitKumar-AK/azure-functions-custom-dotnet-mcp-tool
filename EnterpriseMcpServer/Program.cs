@@ -13,6 +13,8 @@ builder.Services
     .ConfigureFunctionsApplicationInsights();
 
 // Register application services
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IDataverseService, DataverseService>();
+builder.Services.AddScoped<IMonkeyService, MonkeyService>();
 
 builder.Build().Run();

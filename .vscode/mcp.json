@@ -1,6 +1,6 @@
 {
   "servers": {
-    "azure-functions-mcp-local": {
+    "local-azure-functions-mcp": {
       "type": "sse",
       "url": "YOUR-LOCAL-MCP-SERVER-ENDPOINT"
     },

@@ -5,6 +5,7 @@
     "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
     "DataverseEnvironment": "YOUR-DATAVERSE-ENVIRONMENT",
     "ClientId": "YOUR-CLIENT-ID",
-    "ClientSecret": "YOUR-CLIENT-SECRET"
+    "ClientSecret": "YOUR-CLIENT-SECRET",
+    "MonkeysUrl": "SERVICE-URL-FOR-MONKEYS-API"
   }
 }
