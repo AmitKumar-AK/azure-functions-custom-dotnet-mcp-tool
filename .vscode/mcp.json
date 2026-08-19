@@ -3,7 +3,14 @@
     "azure-functions-mcp-local": {
       "type": "sse",
       "url": "YOUR-LOCAL-MCP-SERVER-ENDPOINT"
-    }
+    },
+    "azure-functions-mcp": {
+      "type": "sse",
+      "url": "https://func-mcp-prod.azurewebsites.net/runtime/webhooks/mcp",
+      "headers": {
+        "x-functions-key": "YOUR_MCP_EXTENSION_SYSTEM_KEY"
+      }
+    }    
   },
   "inputs": []
 }
