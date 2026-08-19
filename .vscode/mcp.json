@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "azure-functions-mcp-local": {
+      "type": "sse",
+      "url": "YOUR-LOCAL-MCP-SERVER-ENDPOINT"
+    }
+  },
+  "inputs": []
+}

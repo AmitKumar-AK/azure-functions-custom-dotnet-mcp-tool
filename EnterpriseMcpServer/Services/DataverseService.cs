@@ -35,6 +35,43 @@ public sealed class DataverseService : IDataverseService
         _logger = logger;
     }
 
+
+    /// <summary>
+    /// Creates a new enquiry record in Dataverse.
+    /// Validates field lengths and truncates values if necessary before creating the entity.
+    /// </summary>
+    /// <param name="request">The request containing enquiry details to create.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>The unique identifier (GUID) of the newly created enquiry.</returns>
+    /// <exception cref="ArgumentException">Thrown when validation fails or field lengths exceed maximum allowed values.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when unable to connect to Dataverse.</exception>
+    public async Task<Guid> CreateEnquiryAsync(
+        CreateEnquiryRequest request,
+        CancellationToken cancellationToken)
+    {
+        // Validate field lengths before attempting to create
+        ValidateFieldLengths(request);
+
+        using var client = CreateServiceClient();
+
+        var entity = new Entity(Constants.Dataverse.TableName)
+        {
+            [Constants.Dataverse.Columns.NewColumn] = TruncateIfNeeded(request.Name, Constants.Dataverse.MaxLength.Name),
+            [Constants.Dataverse.Columns.Email] = TruncateIfNeeded(request.Email, Constants.Dataverse.MaxLength.Email),
+            [Constants.Dataverse.Columns.Message] = TruncateIfNeeded(request.Message, Constants.Dataverse.MaxLength.Message),
+            [Constants.Dataverse.Columns.Source] = TruncateIfNeeded(request.Source ?? Constants.Dataverse.DefaultSource, Constants.Dataverse.MaxLength.Source)
+        };
+
+        var id = await Task.Run(() => client.Create(entity), cancellationToken);
+
+        _logger.LogInformation(
+            Constants.LogMessages.CreatedDataverseEnquiryRecord,
+            id);
+
+        return id;
+    }
+
+
     /// <summary>
     /// Retrieves multiple enquiries from Dataverse, ordered by creation date descending.
     /// </summary>
@@ -72,6 +109,51 @@ public sealed class DataverseService : IDataverseService
 
         return results.Entities.Select(MapEntityToResponse).ToList();
     }
+
+
+    /// <summary>
+    /// Retrieves a single enquiry by its unique identifier.
+    /// Returns null if the enquiry is not found.
+    /// </summary>
+    /// <param name="id">The unique identifier of the enquiry.</param>
+    /// <param name="cancellationToken">Token to cancel the operation.</param>
+    /// <returns>The enquiry response if found; otherwise, null.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when unable to connect to Dataverse.</exception>
+    public async Task<EnquiryResponse?> GetEnquiryByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        using var client = CreateServiceClient();
+
+        var entity = await Task.Run(() =>
+            client.Retrieve(
+                Constants.Dataverse.TableName,
+                id,
+                new ColumnSet(
+                    Constants.Dataverse.Columns.NewColumn,
+                    Constants.Dataverse.Columns.Email,
+                    Constants.Dataverse.Columns.Message,
+                    Constants.Dataverse.Columns.Source,
+                    Constants.Dataverse.Columns.CreatedOn,
+                    Constants.Dataverse.Columns.ModifiedOn)
+            ),
+            cancellationToken);
+
+        if (entity == null)
+        {
+            _logger.LogWarning(
+                Constants.LogMessages.EnquiryRecordNotFound,
+                id);
+            return null;
+        }
+
+        _logger.LogInformation(
+            Constants.LogMessages.RetrievedDataverseEnquiryRecord,
+            id);
+
+        return MapEntityToResponse(entity);
+    }
+
 
     /// <summary>
     /// Creates and initializes a ServiceClient for connecting to Microsoft Dataverse.
