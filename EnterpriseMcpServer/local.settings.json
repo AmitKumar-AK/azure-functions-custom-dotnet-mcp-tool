@@ -1,0 +1,13 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
+    "DataverseEnvironment": "YOUR-DATAVERSE-ENVIRONMENT",
+    "ClientId": "YOUR-CLIENT-ID",
+    "ClientSecret": "YOUR-CLIENT-SECRET",
+    "MonkeysUrl": "SERVICE-URL-FOR-MONKEYS-API",
+    "EdgeGQLUrl": "https://edge.sitecorecloud.io/api/graphql/v1",
+    "EdgeGQLKey": "YOUR-SITECORE-EDGE-API-KEY"
+  }
+}
